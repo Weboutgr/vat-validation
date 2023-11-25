@@ -1,0 +1,33 @@
+<modification>
+	<name>Vat Validation New Version </name>
+    <version>4</version>
+    <link>https://webout.gr</link>
+    <author>webout team</author>
+    <code>43500</code>
+	<file path="catalog/controller/account/register.php|catalog/controller/checkout/checkout.php">
+		<operation error="skip">
+            <search position="after"><![CDATA[function index]]></search>
+            <add position="after"><![CDATA[if(file_exists('catalog/model/extension/vat_validation.php')) { 
+				$this->load->model('extension/vat_validation');
+   				$this->model_extension_vat_validation->loadfooterjs();
+			}]]></add> 
+        </operation>
+    </file>
+	<file path="catalog/controller/account/address.php">
+		<operation error="skip">
+            <search position="after"><![CDATA[function edit]]></search>
+            <add position="after"><![CDATA[if(file_exists('catalog/model/extension/vat_validation.php')) { 
+				$this->load->model('extension/vat_validation');
+   				$this->model_extension_vat_validation->loadfooterjs();
+			}]]></add> 
+        </operation>
+		<operation error="skip">
+            <search position="after"><![CDATA[function add]]></search>
+            <add position="after"><![CDATA[if(file_exists('catalog/model/extension/vat_validation.php')) { 
+				$this->load->model('extension/vat_validation');
+   				$this->model_extension_vat_validation->loadfooterjs();
+			}]]></add> 
+        </operation>
+    </file>
+	
+</modification>
