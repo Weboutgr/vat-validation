@@ -1,0 +1,71 @@
+<modification>
+	<name>Vat Validation New Version </name>
+    <version>5</version>
+    <link>https://webout.gr</link>
+    <author>webout team</author>
+    <code>43500</code>
+	<file path="catalog/controller/account/register.php|catalog/controller/checkout/checkout.php">
+		<operation error="skip">
+            <search position="after"><![CDATA[function index]]></search>
+            <add position="after"><![CDATA[if(file_exists('catalog/model/extension/vat_validation.php')) { 
+				$this->load->model('extension/vat_validation');
+   				$this->model_extension_vat_validation->loadfooterjs();
+			}]]></add> 
+        </operation>
+    </file>
+	<file path="catalog/controller/account/address.php">
+		<operation error="skip">
+            <search position="after"><![CDATA[function edit]]></search>
+            <add position="after"><![CDATA[if(file_exists('catalog/model/extension/vat_validation.php')) { 
+				$this->load->model('extension/vat_validation');
+   				$this->model_extension_vat_validation->loadfooterjs();
+			}]]></add> 
+        </operation>
+		<operation error="skip">
+            <search position="after"><![CDATA[function add]]></search>
+            <add position="after"><![CDATA[if(file_exists('catalog/model/extension/vat_validation.php')) { 
+				$this->load->model('extension/vat_validation');
+   				$this->model_extension_vat_validation->loadfooterjs();
+			}]]></add> 
+        </operation>
+    </file>
+		<file path="catalog/model/journal3/order.php">
+		<operation error="skip">
+            <search ><![CDATA[// Gift Voucher]]></search>
+            <add position="before"><![CDATA[
+            // custom validation
+        if($data['customer_id']) 
+        {
+            $this->db->query("UPDATE " . DB_PREFIX . "customer SET vat_number = '" . $this->db->escape($data['payment_custom_field']['300']) . "', doy = '" . $this->db->escape($data['payment_custom_field']['301']) . "', profession = '" . $this->db->escape($data['payment_custom_field']['302']) . "' where customer_id=" . $this->db->escape($data['customer_id']) ."");
+            error_log(print_r($data['payment_custom_field'], true));
+            error_log(print_r($data['customer_id'], true));
+        }
+        
+        $order_invoice1 = $this->db->query("SELECT * FROM `oc_order_invoice` WHERE order_id = '" . $order_id . "'");
+        
+        if (!$order_invoice1->num_rows) {
+                                        if(is_array($data) && is_array($data['payment_custom_field']))
+            {
+        $this->db->query("INSERT INTO " . DB_PREFIX . "order_invoice SET order_id= '" . $order_id . "',vat_number = '" . $this->db->escape($data['payment_custom_field']['300']) . "', doy = '" . $this->db->escape($data['payment_custom_field']['301']) . "', profession = '" . $this->db->escape($data['payment_custom_field']['302']) . "' , business_name = '" . $this->db->escape($data['payment_company']) . "'");
+        }
+        }
+        else
+        {
+                                if(is_array($data) && is_array($data['payment_custom_field']))
+            {
+        $this->db->query("UPDATE " . DB_PREFIX . "order_invoice SET order_id= '" . $order_id . "',vat_number = '" . $this->db->escape($data['payment_custom_field']['300']) . "', doy = '" . $this->db->escape($data['payment_custom_field']['301']) . "', profession = '" . $this->db->escape($data['payment_custom_field']['302']) . "' , business_name = '" . $this->db->escape($data['payment_company']) . "' WHERE order_id='" . $order_id . "'");
+        }
+        }
+            ]]></add> 
+        </operation>
+    </file>
+    <file path="catalog/model/account/address.php">
+		<operation error="skip">
+            <search ><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "address SET customer_id = '" . (int)$customer_id . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', company = '" . $this->db->escape($data['company']) . "', address_1 = '" . $this->db->escape($data['address_1']) . "', address_2 = '" . $this->db->escape($data['address_2']) . "', postcode = '" . $this->db->escape($data['postcode']) . "', city = '" . $this->db->escape($data['city']) . "', zone_id = '" . (int)$data['zone_id'] . "', country_id = '" . (int)$data['country_id'] . "', custom_field = '" . $this->db->escape(isset($data['custom_field']['address']) ? json_encode($data['custom_field']['address']) : '') . "'");]]></search>
+            <add position="after"><![CDATA[
+            // custom validation
+            $this->db->query("UPDATE " . DB_PREFIX . "customer SET vat_number = '" . $this->db->escape($data['custom_field']['address']['300']) . "', doy = '" . $this->db->escape($data['custom_field']['address']['301']) . "', profession = '" . $this->db->escape($data['custom_field']['address']['302']) . "' where customer_id = '" . $customer_id . "'");
+            ]]></add> 
+        </operation>
+    </file>
+</modification>
